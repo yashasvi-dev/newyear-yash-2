@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>New Year Surprise</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Fredoka:wght@400;600&family=Nunito:wght@400;700&family=Playfair+Display:ital,wght@1,500&display=swap"
+        rel="stylesheet">
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        /* --- 1. PINK BACKGROUND --- */
+        body {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
+            color: #444;
+            font-family: 'Nunito', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Floating background hearts container */
+        .bg-hearts {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .bg-heart {
+            position: absolute;
+            opacity: 0;
+            animation: floatUp linear infinite;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        .bg-kiss {
+            position: absolute;
+            opacity: 0;
+            animation: floatUp linear 1;
+            font-size: 24px;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(100vh) scale(0.5);
+                opacity: 0;
+            }
+
+            20% {
+                opacity: 0.8;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(-10vh) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* --- 2. TEXT STYLES --- */
+        .pov-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 26px;
+            font-style: italic;
+            margin-bottom: 25px;
+            text-align: center;
+            color: #d63384;
+            text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
+            letter-spacing: 1px;
+        }
+
+        h3 {
+            font-family: 'Fredoka', sans-serif;
+            font-size: 24px;
+            margin: 10px 0 5px;
+            color: #ff6b81;
+        }
+
+        p {
+            font-size: 16px;
+            color: #666;
+            margin: 0 0 20px;
+            font-weight: 600;
+        }
+
+        /* --- 3. THE FANCY CARD --- */
+        .window {
+            background: rgba(255, 255, 255, 0.85);
+            width: 340px;
+            padding: 35px 25px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1),
+                0 0 0 5px rgba(255, 255, 255, 0.4);
+            text-align: center;
+            position: relative;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            transition: all 0.5s ease;
+            border: 4px dashed #ff6b81;
+            animation: borderFlash 1s infinite alternate;
+        }
+
+        .cat-img {
+            height: 170px;
+            object-fit: contain;
+            margin-bottom: 15px;
+            filter: drop-shadow(0 5px 10px rgba(0, 0, 0, 0.1));
+            animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+        }
+
+        @keyframes bounceIn {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            80% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        /* --- 4. BUTTONS --- */
+        .btn-container {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            width: 100%;
+        }
+
+        button {
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            color: white;
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+            font-size: 14px;
+            text-transform: uppercase;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 105, 135, 0.3);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 105, 135, 0.5);
+        }
+
+        button:active {
+            transform: scale(0.95);
+        }
+
+        /* --- 5. LOVE LETTER --- */
+        .envelope-wrapper {
+            position: relative;
+            cursor: pointer;
+            margin: 20px auto;
+            transition: transform 0.3s;
+        }
+
+        .envelope-wrapper:hover {
+            transform: scale(1.05);
+        }
+
+        .envelope {
+            width: 160px;
+            height: 150px;
+            background: #ff6b81;
+            position: relative;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+        }
+
+        .flap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            border-left: 80px solid transparent;
+            border-right: 80px solid transparent;
+            border-top: 70px solid #ff4757;
+            transform-origin: top;
+            transition: 0.6s ease-in-out;
+            z-index: 3;
+        }
+
+        .flap::after {
+            content: '❤';
+            position: absolute;
+            top: -45px;
+            left: -12px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .letter {
+            position: absolute;
+            top: 5px;
+            left: 10px;
+            width: 140px;
+            height: 210px;
+            background: #fff;
+            background-image: repeating-linear-gradient(transparent, transparent 19px, #eee 20px);
+            border-radius: 5px;
+            padding: 15px 10px;
+            box-sizing: border-box;
+            font-family: 'Dancing Script', cursive;
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: 0.6s ease-in-out;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: translateY(0);
+        }
+
+        .open .flap {
+            transform: rotateX(180deg);
+            z-index: 0;
+        }
+
+        .open .letter {
+            transform: translateY(-90px);
+            z-index: 4;
+            opacity: 1;
+        }
+
+        /* --- BURST HEARTS --- */
+        .burst-heart {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-size: 3rem;
+            color: #ff0000;
+            z-index: 10;
+            pointer-events: none;
+            animation: burst 2.5s forwards ease-out;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        @keyframes burst {
+            0% {
+                transform: translate(-50%, -50%) scale(0.5);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translate(calc(-50% + var(--tx)), calc(-50% + var(--ty))) scale(1.2) rotate(var(--rot));
+                opacity: 0;
+            }
+        }
+
+        /* --- 6. FINAL POLAROID --- */
+        .polaroid {
+            background: white;
+            padding: 12px 12px 50px 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            transform: rotate(-3deg) scale(0);
+            width: 85%;
+            margin-top: 10px;
+            animation: showPolaroid 0.8s forwards;
+            animation-delay: 0.3s;
+        }
+
+        @keyframes showPolaroid {
+            to {
+                transform: rotate(-3deg) scale(1);
+            }
+        }
+
+        .polaroid img {
+            width: 100%;
+            border-radius: 2px;
+            display: block;
+        }
+
+        /* --- STYLES FOR NEW PAGES --- */
+        @keyframes borderFlash {
+            0% {
+                border-color: #ff6b81;
+                box-shadow: 0 0 10px #ff6b81;
+            }
+
+            100% {
+                border-color: #ffd700;
+                box-shadow: 0 0 20px #ffd700;
+            }
+        }
+
+        .sparkle-text {
+            font-family: 'Dancing Script', cursive;
+            font-size: 32px;
+            background: linear-gradient(to right, #ff6b81, #ffd700, #ff6b81);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-size: 200% auto;
+            animation: shine 2s linear infinite;
+        }
+
+        @keyframes shine {
+            to {
+                background-position: 200% center;
+            }
+        }
+
+        .wishes {
+            text-align: left;
+            font-size: 16px;
+            line-height: 1.8;
+            margin: 20px 0;
+        }
+
+        .wishes b {
+            color: #ff6b81;
+        }
+
+        /* Love Meter */
+        .meter-container {
+            width: 80%;
+            height: 20px;
+            background: #eee;
+            border-radius: 10px;
+            margin: 20px auto;
+            overflow: hidden;
+            border: 2px solid #ff9a9e;
+        }
+
+        .meter-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #ff9a9e, #ff6b81);
+            transition: width 2s cubic-bezier(0.1, 0.7, 1.0, 0.1);
+        }
+
+        #meter-text {
+            font-weight: bold;
+            font-size: 20px;
+            color: #d63384;
+            min-height: 30px;
+        }
+
+        /* Memory Gallery */
+        .gallery {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .gallery img {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border: 2px solid white;
+            transition: transform 0.2s;
+        }
+
+        .gallery img:hover {
+            transform: scale(1.1);
+            z-index: 10;
+        }
+
+        /* Golden Ticket */
+        .ticket {
+            background: #ffd700;
+            color: #d4af37;
+            padding: 15px;
+            width: 90%;
+            margin: 20px auto;
+            border: 2px dashed #b8860b;
+            border-radius: 10px;
+            font-family: 'Fredoka', sans-serif;
+            background: radial-gradient(circle, #fffacd 0%, #ffd700 100%);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Utils */
+        .hidden {
+            display: none !important;
+        }
+
+        .flash-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .flash-active {
+            animation: flash 0.8s ease-out;
+        }
+
+        @keyframes flash {
+            0% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-hearts" id="bg-hearts"></div>
+
+    <div id="music-container" style="position: absolute; top: -9999px; left: -9999px;"></div>
+
+    <div class="window" id="main-window">
+
+        <div id="step1">
+            <img src="cute face.jpeg" class="cat-img">
+            <h3>I Made Something for you!</h3>
+            <p>Will you see it?</p>
+            <div class="btn-container">
+                <button onclick="nextStep(3)">YES</button>
+                <button onclick="nextStep(2)">NO</button>
+            </div>
+        </div>
+
+        <div id="step2" class="hidden">
+            <img src="with gun.jpeg" class="cat-img">
+            <h3>HOW DARE YOUUU!</h3>
+            <p>Go back and click yes!</p>
+            <button onclick="nextStep(1)">BACK</button>
+        </div>
+
+        <div id="step3" class="hidden">
+            <img src="thankyou face.jpeg" class="cat-img">
+            <h3>Hehe!</h3>
+            <p>Wait, before we start...</p>
+            <button onclick="nextStep('music')">NEXT ➝</button>
+        </div>
+
+        <div id="step-music" class="hidden">
+            <img src="music cat.jpg" class="cat-img">
+            <h3>Set the Mood 🎵</h3>
+            <p>I want this to be perfect!</p>
+            <button id="music-btn" onclick="playMusic()">▶ PLAY MUSIC</button>
+        </div>
+
+        <div id="step-reasons" class="hidden">
+            <img src="cat with flowes.gif" class="cat-img">
+            <h3>3 Things I Love...</h3>
+            <div style="text-align: left; margin: 15px 0; color: #555;">
+                <p>1. Your beautiful smile ❤️</p>
+                <p>2. The way you care for me 🥺</p>
+                <p>3. That you are my best friend and my love ❤️</p>
+            </div>
+            <button onclick="nextStep('meter')">CONTINUE ➝</button>
+        </div>
+
+        <div id="step-meter" class="hidden">
+            <img src="shy cat.jpg" class="cat-img">
+            <h3>Compatibility Check</h3>
+            <p>Let's calculate our love...</p>
+            <div class="meter-container">
+                <div class="meter-fill" id="love-fill"></div>
+            </div>
+            <div id="meter-text">0%</div>
+            <button id="meter-btn" onclick="runLoveMeter()">CHECK ❤️</button>
+        </div>
+
+        <div id="step-fortune" class="hidden">
+            <img src="fortune ball.gif" class="cat-img">
+            <h3>2026 Prediction 🔮</h3>
+            <p>Tap to reveal your fortune...</p>
+            <p id="fortune-text" style="color:#d63384; font-weight:bold; min-height:40px;"></p>
+            <button id="fortune-btn" onclick="revealFortune()">REVEAL ✨</button>
+            <button id="fortune-next-btn" class="hidden" onclick="nextStep('date')">NEXT ➝</button>
+        </div>
+
+        <div id="step-date" class="hidden">
+            <img src="with gift.jpeg" class="cat-img">
+            <h3>Our First 2026 Date? 🌹</h3>
+            <p>Let destiny decide...</p>
+            <div id="date-idea" style="font-size:20px; font-weight:bold; color:#ff6b81; margin:15px 0;">❓❓❓</div>
+            <button id="date-btn" onclick="pickDate()">SPIN THE WHEEL 🎡</button>
+            <button id="date-next-btn" class="hidden" onclick="nextStep('ticket')">GOOD IDEA ➝</button>
+        </div>
+
+        <div id="step-ticket" class="hidden">
+            <h3>You Won a Gift! 🎁</h3>
+            <p>Screenshot this to redeem:</p>
+            <div class="ticket">
+                <div style="border: 2px dashed #b8860b; padding:10px;">
+                    <h2 style="margin:0; color:#b8860b;">GOLDEN TICKET</h2>
+                    <p style="margin:5px 0 0; color:#555;">Valid for: <br><b>ONE BIG TIGHT HUG 🫂</b></p>
+                    <p style="font-size:10px; margin-top:5px;">Expires: NEVER</p>
+                </div>
+            </div>
+            <button onclick="nextStep(4)">CLAIM & CONTINUE ➝</button>
+        </div>
+
+        <div id="step4" class="hidden">
+            <img src="newyear cat.gif" class="cat-img">
+            <h3>Happy New Year MY LOVE!</h3>
+            <p>I Have A Surprise For You!</p>
+            <button onclick="nextStep('letter')">OPEN IT</button>
+        </div>
+
+        <div id="step-letter" class="hidden">
+            <h3>For You...</h3>
+            <div class="envelope-wrapper" id="envelope-wrapper" onclick="openLetter()">
+                <div class="envelope" id="envelope">
+                    <div class="flap"></div>
+                    <div class="letter">
+                        "You are the best thing that happened to me in 2025 thank you for everthing. I really miss you
+                        soo much. meri taraf se bohat sara pyaar. I Love You.<br>Happy 2026! ❤️"
+                    </div>
+                </div>
+            </div>
+            <button id="after-letter-btn" class="hidden" style="margin-top: 50px;"
+                onclick="nextStep('kiss')">CONTINUE</button>
+        </div>
+
+        <div id="step-kiss" class="hidden">
+            <img src="Kittens Kissing.jpg" class="cat-img">
+            <h3>One Last Thing...</h3>
+            <p>I need a New Year Kiss! 💋</p>
+            <button onclick="sendKiss()">SEND KISS 😘</button>
+        </div>
+
+        <div id="step-promise" class="hidden">
+            <img src="cute cat.jpg" class="cat-img">
+            <h3>My Promise...</h3>
+            <p>For 2026, I promise to:</p>
+            <p id="promise-text" style="font-family:'Dancing Script'; font-size:24px; color:#d63384; min-height:40px;">
+                ...</p>
+            <button onclick="revealPromise()">REVEAL ✨</button>
+            <button id="promise-next-btn" class="hidden" onclick="nextStep('memories')">NEXT ➝</button>
+        </div>
+
+        <div id="step-memories" class="hidden">
+            <h3>Our 2025 Memories</h3>
+            <p style="font-size:14px; margin-bottom:10px;">Looking back at us... ❤️</p>
+            <div class="gallery">
+                <img src="memo1.jpeg"><img src="memo2.jpeg"><img src="memo3.jpeg">
+                <img src="memo4.jpeg"><img src="memom5.jpeg"><img src="memo6.jpeg">
+                <img src="memo7.jpeg"><img src="memo8.jpeg"><img src="memo9.jpeg">
+            </div>
+            <button onclick="nextStep(5)">CONTINUE ➝</button>
+        </div>
+
+        <div id="step5" class="hidden">
+            <img src="with cam.jpeg" class="cat-img">
+            <h3>SMILEEEEE</h3>
+            <p>Let's capture this moment!</p>
+            <button onclick="capture()">📸 CLICK</button>
+        </div>
+
+        <div id="step6" class="hidden">
+            <div class="polaroid">
+                <img src="memo4.jpeg">
+                <div style="margin-top:15px; font-family:'Dancing Script', cursive; font-size: 24px; color: #333;">I
+                    Love You ❤️</div>
+            </div>
+            <button onclick="startParty()" style="margin-top: 25px;">NEXT ➝</button>
+        </div>
+
+        <div id="step7" class="hidden">
+            <h2 class="sparkle-text">Happy 2026 My Love! </h2>
+            <div class="wishes">
+                <p><b>✨</b> Walking into 2026 with you is the only gift I need. Thank you for making my 2025 beautiful.
+                    I promise to love you even louder this year.</p>
+                <p> <b>✨</b> They say time flies when you're having fun, but it also flies when you're in love. I can't
+                    wait to make 365 more memories with my favorite person. Happy New Year, baby</p>
+                <p> <b>✨</b> This year, I want to see you shine. Go after every dream, and know that I’ll be right there
+                    cheering the loudest. You got this, my love.</p>
+            </div>
+            <h3 style="color: #ff6b81; font-size: 18px;">Let's Party! 🎈</h3>
+            <button onclick="location.reload()" style="margin-top: 10px; background: #ccc;">RESTART ↺</button>
+        </div>
+
+    </div>
+
+    <div id="flash-overlay" class="flash-overlay"></div>
+
+    <script>
+        // 1. Hearts
+        function createHearts() {
+            const container = document.getElementById('bg-hearts');
+            const heartCount = 30;
+            const colors = ['#ff0000', '#ff4d6d', '#ff8fa3', '#ffffff'];
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('bg-heart');
+                heart.innerHTML = '❤';
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = Math.random() * 3 + 3 + 's';
+                heart.style.fontSize = Math.random() * 25 + 10 + 'px';
+                heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+                container.appendChild(heart);
+            }
+        }
+        createHearts();
+
+        // 2. Navigation
+        function nextStep(step) {
+            document.querySelectorAll('.window > div').forEach(div => div.classList.add('hidden'));
+
+            if (step === 1) {
+                document.querySelector('.envelope-wrapper').classList.remove('open');
+                document.getElementById('after-letter-btn').classList.add('hidden');
+                document.querySelectorAll('.burst-heart').forEach(el => el.remove());
+                document.getElementById('main-window').classList.remove('party-mode');
+                document.getElementById("music-container").innerHTML = "";
+            }
+
+            // Named Steps
+            if (step === 'letter') document.getElementById('step-letter').classList.remove('hidden');
+            else if (step === 'music') document.getElementById('step-music').classList.remove('hidden');
+            else if (step === 'reasons') document.getElementById('step-reasons').classList.remove('hidden');
+            else if (step === 'meter') document.getElementById('step-meter').classList.remove('hidden');
+            else if (step === 'fortune') document.getElementById('step-fortune').classList.remove('hidden');
+            else if (step === 'date') document.getElementById('step-date').classList.remove('hidden');
+            else if (step === 'ticket') document.getElementById('step-ticket').classList.remove('hidden');
+            else if (step === 'kiss') document.getElementById('step-kiss').classList.remove('hidden');
+            else if (step === 'promise') document.getElementById('step-promise').classList.remove('hidden');
+            else if (step === 'memories') document.getElementById('step-memories').classList.remove('hidden');
+            else document.getElementById('step' + step).classList.remove('hidden');
+        }
+
+        // --- JS LOGIC FOR NEW PAGES ---
+
+        // Play Music
+        function playMusic() {
+            var musicDiv = document.getElementById("music-container");
+            var btn = document.getElementById("music-btn");
+            musicDiv.innerHTML = '<iframe width="1" height="1" src="https://www.youtube.com/embed/LV_wiOhO40Q?autoplay=1&loop=1&playlist=LV_wiOhO40Q" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>';
+            btn.innerText = "Playing... 🎵";
+            setTimeout(() => { btn.innerText = "CONTINUE ➝"; btn.setAttribute("onclick", "nextStep('reasons')"); }, 2000);
+        }
+
+        // Love Meter
+        function runLoveMeter() {
+            let fill = document.getElementById('love-fill');
+            let text = document.getElementById('meter-text');
+            let btn = document.getElementById('meter-btn');
+            fill.style.width = "100%";
+            let count = 0;
+            let interval = setInterval(() => {
+                count++;
+                text.innerText = count + "%";
+                if (count === 100) {
+                    clearInterval(interval);
+                    text.innerText = "1000% MATCH! 💖";
+                    text.style.fontSize = "28px";
+                    btn.innerText = "CONTINUE ➝";
+                    btn.setAttribute("onclick", "nextStep('fortune')"); // Go to Fortune
+                }
+            }, 20);
+        }
+
+        // Fortune/Crystal Ball
+        function revealFortune() {
+            const fortunes = ["Years of happiness! ✨", "Endless romance! ❤️", "Success & Love! 🌟"];
+            const text = document.getElementById('fortune-text');
+            text.innerText = fortunes[Math.floor(Math.random() * fortunes.length)];
+            document.getElementById('fortune-btn').classList.add('hidden');
+            document.getElementById('fortune-next-btn').classList.remove('hidden');
+        }
+
+        // Date Picker
+        function pickDate() {
+            const ideas = ["Movie Night 🍿", "Long Drive 🚗", "Pizza Date 🍕", "Stargazing ✨", "Picnic 🧺"];
+            const display = document.getElementById('date-idea');
+            let count = 0;
+            const interval = setInterval(() => {
+                display.innerText = ideas[count % ideas.length];
+                count++;
+                if (count > 15) {
+                    clearInterval(interval);
+                    document.getElementById('date-btn').classList.add('hidden');
+                    document.getElementById('date-next-btn').classList.remove('hidden');
+                }
+            }, 100);
+        }
+
+        // Reveal Promise
+        function revealPromise() {
+            document.getElementById('promise-text').innerText = "Love you more every single day! ❤️";
+            document.querySelector('#step-promise button:first-of-type').classList.add('hidden');
+            document.getElementById('promise-next-btn').classList.remove('hidden');
+        }
+
+        // Send Kiss
+        function sendKiss() {
+            const container = document.getElementById('bg-hearts');
+            for (let i = 0; i < 15; i++) {
+                const kiss = document.createElement('div');
+                kiss.classList.add('bg-kiss');
+                kiss.innerHTML = '💋';
+                kiss.style.left = Math.random() * 100 + 'vw';
+                kiss.style.animationDuration = Math.random() * 2 + 2 + 's';
+                container.appendChild(kiss);
+                setTimeout(() => { kiss.remove() }, 4000);
+            }
+            setTimeout(() => { nextStep('promise') }, 1500);
+        }
+
+        // Open Letter
+        function openLetter() {
+            const envelopeWrapper = document.getElementById('envelope-wrapper');
+            const btn = document.getElementById('after-letter-btn');
+            if (!envelopeWrapper.classList.contains('open')) {
+                envelopeWrapper.classList.add('open');
+                createHeartBurst();
+                setTimeout(() => { btn.classList.remove('hidden'); }, 800);
+            }
+        }
+
+        function createHeartBurst() {
+            const container = document.getElementById('envelope-wrapper');
+            const heartCount = 20;
+            for (let i = 0; i < heartCount; i++) {
+                const heart = document.createElement('div');
+                heart.classList.add('burst-heart');
+                heart.innerHTML = '❤';
+                const randomX = (Math.random() - 0.5) * 200;
+                const randomY = -(Math.random() * 150 + 100);
+                const randomRot = (Math.random() - 0.5) * 60;
+                heart.style.setProperty('--tx', randomX + 'px');
+                heart.style.setProperty('--ty', randomY + 'px');
+                heart.style.setProperty('--rot', randomRot + 'deg');
+                heart.style.animationDelay = (Math.random() * 0.2) + 's';
+                container.appendChild(heart);
+                setTimeout(() => { heart.remove(); }, 1500);
+            }
+        }
+
+        // Camera Flash
+        function capture() {
+            const flash = document.getElementById('flash-overlay');
+            flash.classList.add('flash-active');
+            setTimeout(() => { nextStep(6); }, 200);
+            setTimeout(() => { flash.classList.remove('flash-active'); }, 1000);
+        }
+
+        // Party
+        function startParty() {
+            nextStep(7);
+            document.getElementById('main-window').classList.add('party-mode');
+            var duration = 15 * 1000;
+            var animationEnd = Date.now() + duration;
+            var defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+            function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+            var interval = setInterval(function () {
+                var timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+                var particleCount = 50 * (timeLeft / duration);
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+                confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+            }, 250);
+        }
+    </script>
+</body>
+
+</html>
